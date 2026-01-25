@@ -6,7 +6,7 @@
     },
     "toolchains": [
       {
-        "url": "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9",
+        "url": "https://github.com/npaudio/arm64-gcc-4.9",
         "branch": "master",
         "name": "gcc"
       }
