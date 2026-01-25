@@ -1,46 +1,22 @@
 [
   {
     "kernelSource": {
-      "name": "bxsj-KernelSU-Proton-release",
-      "repo": "https://github.com/AOSP-13-Mediatek/kernel_xiaomi_chopin",
-      "branch": "r",
-      "device": "chopin",
-      "defconfig": "chopin_user_defconfig"
+      "url": "https://github.com/Ante0/RVL_9.1",
+      "branch": "master"
     },
-    "withKernelSU": true,
     "toolchains": [
       {
-        "repo": "https://github.com/kdrag0n/proton-clang",
+        "url": "https://android.googlesource.com/platform/prebuilts/gcc/linux-x86/aarch64/aarch64-linux-android-4.9",
         "branch": "master",
-        "name": "proton-clang",
-        "binPath": ["bin"]
+        "name": "gcc"
       }
     ],
-    "ccache": false,
     "params": {
-      "ARCH": "arm64",
-      "CC": "proton-clang/bin/clang",
-      "externalCommand": {
-        "CROSS_COMPILE": "proton-clang/bin/aarch64-linux-gnu-",
-        "CROSS_COMPILE_ARM32": "proton-clang/bin/arm-linux-gnueabi-",
-        "LD": "proton-clang/bin/ld.lld",
-        "AR": "proton-clang/bin/llvm-ar",
-        "NM": "proton-clang/bin/llvm-nm",
-        "OBJCOPY": "proton-clang/bin/llvm-objcopy",
-        "OBJDUMP": "proton-clang/bin/llvm-objdump",
-        "READELF": "proton-clang/bin/llvm-readelf",
-        "OBJSIZE": "proton-clang/bin/llvm-size",
-        "STRIP": "proton-clang/bin/llvm-strip",
-        "LDGOLD": "proton-clang/bin/aarch64-linux-gnu-ld.gold",
-        "LLVM_AR": "proton-clang/bin/llvm-ar",
-        "LLVM_DIS": "proton-clang/bin/llvm-dis"
-      }
-    },
-    "AnyKernel3": {
-      "use": true,
-      "release": true,
-      "repo": "https://github.com/osm0sis/AnyKernel3",
-      "branch": "master"
+      "arch": "arm64",
+      "compiler": "gcc",
+      "defconfig": "MAR-LX1A_defconfig",
+      "ksu": true,
+      "ksuVersion": "v0.9.5"
     }
   }
 ]
