@@ -12,6 +12,7 @@ jobs:
       - name: Install Toolchain and Dependencies
         run: |
           sudo apt-get update
+          # Installiamo il compilatore di sistema: niente più link privati, niente più errore 128
           sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl git gcc-aarch64-linux-gnu
 
       - name: Get Kernel Source
@@ -30,7 +31,7 @@ jobs:
           cd kernel
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
-          # Questi flag servono a correggere l'errore 'yylloc' delle tue ultime immagini
+          # Questi flag servono a zittire l'errore 'yylloc' dei tuoi ultimi screenshot
           export KCFLAGS="-fcommon"
           export KCPPFLAGS="-fcommon"
           
