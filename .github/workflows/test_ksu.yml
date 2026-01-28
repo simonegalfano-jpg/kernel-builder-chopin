@@ -12,12 +12,11 @@ jobs:
       - name: Install Toolchain and Dependencies
         run: |
           sudo apt-get update
-          # Installiamo il compilatore di sistema per evitare errori di login
+          # Installiamo il compilatore di sistema per non avere mai più errori di login
           sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl git gcc-aarch64-linux-gnu
 
       - name: Get Kernel Source
         run: |
-          # Scarichiamo i sorgenti del P30 Lite
           git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
 
       - name: Integrate KernelSU
@@ -32,7 +31,7 @@ jobs:
           cd kernel
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
-          # Questi flag servono a risolvere l'errore "multiple definition of yylloc"
+          # Questi flag risolvono l'errore 'yylloc' del tuo ultimo screenshot
           export KCFLAGS="-fcommon"
           export KCPPFLAGS="-fcommon"
           
