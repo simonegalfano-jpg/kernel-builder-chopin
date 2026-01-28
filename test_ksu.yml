@@ -1,4 +1,4 @@
-name: Build Kernel P30 Lite + KernelSU
+name: Build Kernel P30 Lite KSU
 on:
   workflow_dispatch:
 
