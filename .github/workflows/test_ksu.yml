@@ -9,17 +9,15 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Install Dependencies
+      - name: Install Toolchain and Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl git
+          # Installiamo il compilatore direttamente dai repository di sistema
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl git gcc-aarch64-linux-gnu
 
-      - name: Get Source and Toolchain
+      - name: Get Kernel Source
         run: |
-          # Kernel - Link Pubblico
           git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
-          # GCC - Link Pubblico LineageOS (Questo NON chiede username)
-          git clone --depth=1 https://github.com/lineageos-mirror/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc
 
       - name: Integrate KernelSU
         run: |
@@ -32,8 +30,9 @@ jobs:
         run: |
           cd kernel
           export ARCH=arm64
-          export CROSS_COMPILE=$GITHUB_WORKSPACE/gcc/bin/aarch64-linux-android-
-          export USE_CCACHE=1
+          # Usiamo il compilatore di sistema appena installato
+          export CROSS_COMPILE=aarch64-linux-gnu-
+          
           make O=out MAR-LX1A_defconfig
           make O=out -j$(nproc)
 
