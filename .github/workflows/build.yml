@@ -1,6 +1,7 @@
 name: Build Kernel P30 Lite
 on:
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-20.04
@@ -11,7 +12,14 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc curlie bison flex libssl-dev libelf-dev
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache
+
+      - name: Setup Cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.ccache
+          key: kernel-build-${{ github.sha }}
+          restore-keys: kernel-build-
 
       - name: Get Source and Toolchain
         run: |
@@ -23,11 +31,17 @@ jobs:
           cd kernel
           export ARCH=arm64
           export CROSS_COMPILE=$GITHUB_WORKSPACE/gcc/bin/aarch64-linux-android-
-          make MAR-LX1A_defconfig
-          make -j$(nproc)
+          export USE_CCACHE=1
+          export CCACHE_DIR=~/.ccache
+          
+          # Velocizziamo il setup
+          make O=out MAR-LX1A_defconfig
+          
+          # Compilazione con ccache e log limitato per non intasare la console
+          make O=out -j$(nproc) | grep -v "CHK\|UPD"
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
           name: Kernel_P30_Lite
-          path: kernel/arch/arm64/boot/Image.gz-dtb
+          path: kernel/out/arch/arm64/boot/Image.gz-dtb
