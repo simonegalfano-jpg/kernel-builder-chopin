@@ -31,12 +31,12 @@ jobs:
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           
-          # Flag corretti per ignorare yylloc e local_clock senza causare errori di comando
-          export KCFLAGS="-fcommon -Wno-implicit-function-declaration -Wno-error"
+          # Questi flag risolvono 'yylloc' e 'local_clock' ignorando gli errori tecnici
+          export KCFLAGS="-fcommon -Wno-error=implicit-function-declaration -Wno-error=date-time"
           export KCPPFLAGS="-fcommon"
           
           make O=out MAR-LX1A_defconfig
-          # Forziamo il superamento degli errori visti nei tuoi screenshot
+          # Forziamo il superamento dei blocchi visti nei tuoi screenshot
           make O=out -j$(nproc) KCFLAGS="$KCFLAGS" KCPPFLAGS="$KCPPFLAGS"
 
       - name: Upload
