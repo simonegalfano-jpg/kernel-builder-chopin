@@ -12,7 +12,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl git
 
       - name: Setup Cache
         uses: actions/cache@v4
@@ -23,15 +23,15 @@ jobs:
 
       - name: Get Source and Toolchain
         run: |
-          git clone --depth=1 https://github.com/Ante0/RVL_9.1 kernel
-          git clone --depth=1 https://github.com/npaudio/arm64-gcc-4.9 gcc
+          # Scarichiamo il kernel (usando single-branch per velocità)
+          git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
+          # Scarichiamo il GCC da un repository pubblico che non chiede password
+          git clone --depth=1 https://github.com/lineageos-mirror/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc
 
       - name: Integrate KernelSU
         run: |
           cd kernel
-          # Questo comando scarica e installa KernelSU nei sorgenti
           curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
-          # Abilitiamo i permessi necessari nel file config
           echo "CONFIG_KSU=y" >> arch/arm64/configs/MAR-LX1A_defconfig
           echo "CONFIG_OVERLAY_FS=y" >> arch/arm64/configs/MAR-LX1A_defconfig
 
@@ -44,7 +44,7 @@ jobs:
           export CCACHE_DIR=~/.ccache
           
           make O=out MAR-LX1A_defconfig
-          make O=out -j$(nproc) | grep -v "CHK\|UPD"
+          make O=out -j$(nproc)
 
       - name: Upload
         uses: actions/upload-artifact@v4
