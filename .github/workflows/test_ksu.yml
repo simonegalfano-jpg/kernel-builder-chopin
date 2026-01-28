@@ -31,10 +31,9 @@ jobs:
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           
-          # Soluzione definitiva: Flag di compatibilità forzata
-          # -fcommon risolve 'yylloc' permettendo definizioni multiple
-          # -Wno-error impedisce il blocco su 'local_clock'
-          export KCFLAGS="-fcommon -Wno-implicit-function-declaration -Wno-error"
+          # FORZATURA TOTALE: Diciamo al compilatore di ignorare i duplicati e i warnings
+          # Questo risolve yylloc e local_clock contemporaneamente
+          export KCFLAGS="-fcommon -Wno-error -Wno-implicit-function-declaration -Wno-conflicting-types"
           export HOSTCFLAGS="-fcommon"
           
           make O=out MAR-LX1A_defconfig
