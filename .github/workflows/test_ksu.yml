@@ -12,12 +12,10 @@ jobs:
       - name: Install Toolchain and Dependencies
         run: |
           sudo apt-get update
-          # Installiamo il compilatore di sistema e le utility necessarie
           sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl git gcc-aarch64-linux-gnu
 
       - name: Get Kernel Source
         run: |
-          # Scarichiamo i sorgenti (Questo passaggio ora è VERDE nei tuoi log)
           git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
 
       - name: Integrate KernelSU
@@ -32,13 +30,13 @@ jobs:
           cd kernel
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
-          # Questi flag sono la CHIAVE per risolvere l'errore 'yylloc' dei tuoi screenshot
-          export KCFLAGS="-fcommon -w"
-          export KCPPFLAGS="-fcommon -w"
+          
+          # Correzione per 'yylloc' e 'local_clock' (Errori visti negli ultimi log)
+          export KCFLAGS="-fcommon -Wno-error=implicit-function-declaration"
+          export KCPPFLAGS="-fcommon"
           
           make O=out MAR-LX1A_defconfig
-          # Forziamo il flag -fcommon anche nel comando make per sicurezza
-          make O=out -j$(nproc) KCFLAGS="-fcommon -w" KCPPFLAGS="-fcommon -w"
+          make O=out -j$(nproc) KCFLAGS="$KCFLAGS" KCPPFLAGS="$KCPPFLAGS"
 
       - name: Upload
         uses: actions/upload-artifact@v4
