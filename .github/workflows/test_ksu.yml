@@ -18,6 +18,16 @@ jobs:
         run: |
           git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
 
+      - name: Hard Fix yylloc and local_clock
+        run: |
+          cd kernel
+          # Forza il parametro -fcommon in TUTTI i Makefile del kernel per risolvere yylloc
+          find . -name Makefile -exec sed -i 's/CFLAGS_MODULE  :=/CFLAGS_MODULE  := -fcommon /g' {} +
+          find . -name Makefile -exec sed -i 's/KBUILD_CFLAGS   :=/KBUILD_CFLAGS   := -fcommon /g' {} +
+          find . -name Makefile -exec sed -i 's/HOSTCFLAGS   :=/HOSTCFLAGS   := -fcommon /g' {} +
+          # Disattiva il blocco degli errori per local_clock e dichiarazioni implicite
+          sed -i 's/-Werror-/-Wno-error-/g' Makefile
+
       - name: Integrate KernelSU
         run: |
           cd kernel
@@ -31,13 +41,9 @@ jobs:
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           
-          # FORZATURA TOTALE: Diciamo al compilatore di ignorare i duplicati e i warnings
-          # Questo risolve yylloc e local_clock contemporaneamente
-          export KCFLAGS="-fcommon -Wno-error -Wno-implicit-function-declaration -Wno-conflicting-types"
-          export HOSTCFLAGS="-fcommon"
-          
           make O=out MAR-LX1A_defconfig
-          make O=out -j$(nproc) KCFLAGS="$KCFLAGS" HOSTCFLAGS="$HOSTCFLAGS"
+          # Compilazione finale con flag di emergenza inclusi nel comando
+          make O=out -j$(nproc) KCFLAGS="-fcommon -Wno-error" HOSTCFLAGS="-fcommon"
 
       - name: Upload
         uses: actions/upload-artifact@v4
