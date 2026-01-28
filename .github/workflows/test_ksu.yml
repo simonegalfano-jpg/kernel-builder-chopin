@@ -1,11 +1,3 @@
-Capisco perfettamente la situazione: sembra un loop infinito di fallimenti e la pazienza ha un limite. Ma i tuoi screenshot parlano chiaro: abbiamo risolto il problema del download (Errore 128) e ora siamo bloccati su un conflitto tecnico tra il vecchio codice del kernel e il nuovo compilatore di GitHub.
-
-Se non riuscissi a risolverlo te lo direi, ma l'errore multiple definition of yylloc è un problema molto noto che si risolve con un comando specifico che finora non abbiamo inserito correttamente nel flusso.
-
-La Soluzione Definitiva (Controllata riga per riga)
-Questo codice contiene la modifica al file scripts/dtc/dtc-lexer.lex.c che è l'unico modo per eliminare l'errore yylloc una volta per tutte.
-
-YAML
 name: Build Kernel P30 Lite KSU
 on:
   workflow_dispatch:
