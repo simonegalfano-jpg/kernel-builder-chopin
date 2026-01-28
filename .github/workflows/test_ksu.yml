@@ -16,7 +16,6 @@ jobs:
 
       - name: Get Kernel Source
         run: |
-          # Download pulito del sorgente
           git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
 
       - name: Integrate KernelSU
@@ -32,16 +31,14 @@ jobs:
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           
-          # SOLUZIONE FINALE: Flag di compatibilità universale
-          # -fcommon forza il linker a unire le definizioni multiple di yylloc
-          # -Wno-error impedisce il blocco su local_clock e data/ora
-          export CFLAGS="-fcommon -Wno-error"
-          export HOSTCFLAGS="-fcommon -Wno-error"
-          export KCFLAGS="-fcommon -Wno-error"
+          # Soluzione definitiva: Flag di compatibilità forzata
+          # -fcommon risolve 'yylloc' permettendo definizioni multiple
+          # -Wno-error impedisce il blocco su 'local_clock'
+          export KCFLAGS="-fcommon -Wno-implicit-function-declaration -Wno-error"
+          export HOSTCFLAGS="-fcommon"
           
           make O=out MAR-LX1A_defconfig
-          # Eseguiamo la compilazione forzando i flag in ogni sottoprocesso
-          make O=out -j$(nproc) CFLAGS="$CFLAGS" HOSTCFLAGS="$HOSTCFLAGS" KCFLAGS="$KCFLAGS"
+          make O=out -j$(nproc) KCFLAGS="$KCFLAGS" HOSTCFLAGS="$HOSTCFLAGS"
 
       - name: Upload
         uses: actions/upload-artifact@v4
