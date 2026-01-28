@@ -1,4 +1,4 @@
-name: Build Kernel P30 Lite
+name: Build Kernel P30 Lite + KernelSU
 on:
   workflow_dispatch:
 
@@ -12,7 +12,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache
+          sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl
 
       - name: Setup Cache
         uses: actions/cache@v4
@@ -26,6 +26,15 @@ jobs:
           git clone --depth=1 https://github.com/Ante0/RVL_9.1 kernel
           git clone --depth=1 https://github.com/npaudio/arm64-gcc-4.9 gcc
 
+      - name: Integrate KernelSU
+        run: |
+          cd kernel
+          # Questo comando scarica e installa KernelSU nei sorgenti
+          curl -LSs "https://raw.githubusercontent.com/tiann/KernelSU/main/kernel/setup.sh" | bash -
+          # Abilitiamo i permessi necessari nel file config
+          echo "CONFIG_KSU=y" >> arch/arm64/configs/MAR-LX1A_defconfig
+          echo "CONFIG_OVERLAY_FS=y" >> arch/arm64/configs/MAR-LX1A_defconfig
+
       - name: Build
         run: |
           cd kernel
@@ -34,14 +43,11 @@ jobs:
           export USE_CCACHE=1
           export CCACHE_DIR=~/.ccache
           
-          # Velocizziamo il setup
           make O=out MAR-LX1A_defconfig
-          
-          # Compilazione con ccache e log limitato per non intasare la console
           make O=out -j$(nproc) | grep -v "CHK\|UPD"
 
       - name: Upload
         uses: actions/upload-artifact@v4
         with:
-          name: Kernel_P30_Lite
+          name: Kernel_P30_Lite_KSU
           path: kernel/out/arch/arm64/boot/Image.gz-dtb
