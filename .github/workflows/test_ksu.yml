@@ -16,6 +16,7 @@ jobs:
 
       - name: Get Kernel Source
         run: |
+          # Questo passaggio ora è verde nei tuoi log grazie al nuovo link
           git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
 
       - name: Integrate KernelSU
@@ -31,11 +32,12 @@ jobs:
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
           
-          # Correzione per 'yylloc' e 'local_clock' (Errori visti negli ultimi log)
-          export KCFLAGS="-fcommon -Wno-error=implicit-function-declaration"
+          # Questi flag risolvono 'yylloc' e le dichiarazioni implicite viste nei tuoi log
+          export KCFLAGS="-fcommon -Wno-error=implicit-function-declaration -Wno-error=date-time"
           export KCPPFLAGS="-fcommon"
           
           make O=out MAR-LX1A_defconfig
+          # Forziamo i flag nel comando make per saltare gli errori degli ultimi screenshot
           make O=out -j$(nproc) KCFLAGS="$KCFLAGS" KCPPFLAGS="$KCPPFLAGS"
 
       - name: Upload
