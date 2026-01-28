@@ -12,11 +12,12 @@ jobs:
       - name: Install Toolchain and Dependencies
         run: |
           sudo apt-get update
-          # Installiamo il compilatore direttamente dai repository di sistema
+          # Installiamo il compilatore di sistema per evitare errori di login
           sudo apt-get install -y build-essential bc bison flex libssl-dev libelf-dev ccache curl git gcc-aarch64-linux-gnu
 
       - name: Get Kernel Source
         run: |
+          # Scarichiamo i sorgenti del P30 Lite
           git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
 
       - name: Integrate KernelSU
@@ -26,16 +27,17 @@ jobs:
           echo "CONFIG_KSU=y" >> arch/arm64/configs/MAR-LX1A_defconfig
           echo "CONFIG_OVERLAY_FS=y" >> arch/arm64/configs/MAR-LX1A_defconfig
 
-      -- name: Build
+      - name: Build
         run: |
           cd kernel
           export ARCH=arm64
           export CROSS_COMPILE=aarch64-linux-gnu-
-          # Questo parametro KCPPFLAGS corregge l'errore yylloc dell'ultima immagine
+          # Questi flag servono a risolvere l'errore "multiple definition of yylloc"
+          export KCFLAGS="-fcommon"
           export KCPPFLAGS="-fcommon"
           
           make O=out MAR-LX1A_defconfig
-          make O=out -j$(nproc) KCFLAGS="-fcommon"
+          make O=out -j$(nproc) KCFLAGS="-fcommon" KCPPFLAGS="-fcommon"
 
       - name: Upload
         uses: actions/upload-artifact@v4
