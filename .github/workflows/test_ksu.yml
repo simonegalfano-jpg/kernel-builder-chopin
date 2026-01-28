@@ -23,8 +23,9 @@ jobs:
 
       - name: Get Source and Toolchain
         run: |
+          # Scarichiamo il kernel
           git clone --depth=1 --single-branch https://github.com/Ante0/RVL_9.1 kernel
-          # Link pubblico che NON chiede password
+          # Link pubblico per GCC che NON chiede password
           git clone --depth=1 https://github.com/lineageos-mirror/android_prebuilts_gcc_linux-x86_aarch64_aarch64-linux-android-4.9 gcc
 
       - name: Integrate KernelSU
@@ -41,6 +42,7 @@ jobs:
           export CROSS_COMPILE=$GITHUB_WORKSPACE/gcc/bin/aarch64-linux-android-
           export USE_CCACHE=1
           export CCACHE_DIR=~/.ccache
+          
           make O=out MAR-LX1A_defconfig
           make O=out -j$(nproc)
 
